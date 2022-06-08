@@ -1,9 +1,31 @@
-import type { NextPage } from 'next'
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
+import { useEffect } from "react";
+import type { NextPage } from "next";
+import Head from "next/head";
+import styles from "../styles/Home.module.css";
+import infoToolTipTemplate from "../components/info-tooltip/template";
+import pinnedLocationLinkTemplate from "../components/pinned-location-link/template";
 
 const Home: NextPage = () => {
+  useEffect(() => {
+    import("@webcomponents/template-shadowroot/template-shadowroot").then(
+      (module) => {
+        const { hasNativeDeclarativeShadowRoots, hydrateShadowRoots } = module;
+
+        if (!hasNativeDeclarativeShadowRoots) {
+          hydrateShadowRoots(document.body);
+        }
+
+        import("../components/info-tooltip/component").then(() => {
+          console.log("Imported info-tooltip!");
+        });
+
+        import("../components/pinned-location-link/component").then(() => {
+          console.log("Imported pinned-location-link!");
+        });
+      }
+    );
+  }, []);
+
   return (
     <div className={styles.container}>
       <Head>
@@ -13,44 +35,31 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.tsx</code>
+        <pinned-location-link
+          data-place-name="Central Park"
+          dangerouslySetInnerHTML={{
+            __html: pinnedLocationLinkTemplate({
+              placeName: "Empire State Building",
+            }),
+          }}
+        />
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+          aliquip ex ea commodo consequat. Duis aute irure dolor in
+          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+          culpa qui officia deserunt mollit anim id est laborum.
+          <info-tooltip
+            data-text="Hello World!"
+            dangerouslySetInnerHTML={{
+              __html: infoToolTipTemplate({
+                text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit,\nsed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+              }),
+            }}
+          ></info-tooltip>
         </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h2>Documentation &rarr;</h2>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h2>Learn &rarr;</h2>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className={styles.card}
-          >
-            <h2>Examples &rarr;</h2>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h2>Deploy &rarr;</h2>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
       </main>
 
       <footer className={styles.footer}>
@@ -59,14 +68,11 @@ const Home: NextPage = () => {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Powered by{' '}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
+          Powered by Vercel
         </a>
       </footer>
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;
